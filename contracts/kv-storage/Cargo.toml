@@ -1,0 +1,11 @@
+[package]
+name = "kv-storage"
+version = "0.1.0"
+authors = ["Maciej Zielinski <maciej@casperlabs.io>"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+contract-ffi = { package = "casperlabs-contract-ffi", version = "0.17.0" }
