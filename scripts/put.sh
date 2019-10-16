@@ -1,5 +1,5 @@
 #!/bin/bash
-DEFINE_WASM=target/wasm32-unknown-unknown/release/counter_define.wasm
+DEFINE_WASM=target/wasm32-unknown-unknown/release/kv_storage.wasm
 
 KEY=$1
 VALUE=$2

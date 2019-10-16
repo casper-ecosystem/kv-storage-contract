@@ -3,7 +3,9 @@
 extern crate alloc;
 extern crate contract_ffi;
 use alloc::string::String;
+use contract_ffi::contract_api;
 
+#[no_mangle]
 pub extern "C" fn call() {
     let key: String = contract_api::get_arg(0).unwrap().unwrap();
     let value: String = contract_api::get_arg(1).unwrap().unwrap();
