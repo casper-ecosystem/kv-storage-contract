@@ -1,7 +1,7 @@
-#[cfg(test)]
+#![cfg(test)]
+
 mod kv_storage;
 
-#[cfg(test)]
 mod tests {
     use super::kv_storage;
     use casperlabs_types::{account::PublicKey, U512};
