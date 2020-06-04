@@ -11,13 +11,13 @@ class KVStorageClient:
 		self.block_hash = None
 		self.session_hash = None
 
-	def deploy_kv_storage_contract(self, from_addr, private_key, block):
+	def deploy_kv_storage_contract(self, from_addr, private_key, contract_wasm_location, block):
 		deploy_hash = self.client.deploy(
 							from_addr = from_addr,
 							private_key = private_key,
 							gas_price=10,
 							payment_amount=2000000,
-							session="../../casperlabs-kv-storage/target/wasm32-unknown-unknown/release/contract.wasm")
+							session=contract_wasm_location)
 		print("Deploy complete. Waiting for deploy to be processed")
 		if block:
 			print("Start: %s" % time.ctime())
@@ -67,6 +67,7 @@ class KVStorageClient:
 		self.insert_value_with_type(from_addr, private_key, session_hash, name, "string",last_arg, block)
 
 	def insert_u512(self, from_addr, private_key, session_hash, name, u512_value, block):
+		print(u512_value)
 		last_arg = abi.ABI.big_int("value", u512_value)
 		self.insert_value_with_type(from_addr, private_key, session_hash, name, "U512" ,last_arg, block)
 

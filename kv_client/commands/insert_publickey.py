@@ -62,6 +62,7 @@ OPTIONS = [
 ]
 
 def method(client: KVStorageClient, args: Dict):
+	print(args.get("value_publickey"))
 	client.insert_publickey(
 		from_addr=args.get("from_addr"),
 		private_key=args.get("private_key"),

@@ -42,7 +42,7 @@ OPTIONS = [
 		),
 	],
 	[
-		("-v","--value-512"),
+		("-v","--value-u512"),
 		dict(
 			required=True,
 			type=int,
