@@ -1,6 +1,6 @@
 import argparse
 import sys
-from gooey import Gooey, GooeyParser
+# from gooey import Gooey, GooeyParser
 
 from kv_storage_client import KVStorageClient
 from commands import (
@@ -12,11 +12,10 @@ from commands import (
 	read_key
 )
 
-@Gooey(program_name='CasperLabs Key-Value Storage Client')		
 def cli(*arguments) -> int:
 	class Parser:
 		def __init__(self):
-			self.parser = GooeyParser(
+			self.parser = argparse.ArgumentParser(
 				prog="kv_storage_client", add_help=False
 			)
 			self.parser.add_argument(
@@ -61,7 +60,6 @@ def cli(*arguments) -> int:
 				command_parser.add_argument(*args, **options)
 
 		def run(self, argv):
-			print(self.parser.parse_args(argv))
 			args = vars(self.parser.parse_args(argv))
 			return args["function"](
 				KVStorageClient(
