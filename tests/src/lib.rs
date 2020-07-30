@@ -51,16 +51,15 @@ mod tests {
         let check: AccountHash = kv_storage.query_contract(&KEY_NAME).unwrap();
         assert_eq!(value, check);
     }
-    /*
+    
     #[test]
-    #[ignore]
     fn should_update_u64() {
         const KEY_NAME: &str = "testu64";
         let mut kv_storage = KVstorageContract::deploy();
-        let args = (KEY_NAME, KEY_TYPE, 1u64);
-        kv_storage.call_indirect(args);
-        let update_args = (KEY_NAME, KEY_TYPE, 2u64);
-        kv_storage.call_indirect(update_args);
+        let original_value: u64 = 1;
+        let updated_value: u64 = 2;
+        kv_storage.call_store_u64(KEY_NAME.to_string(), original_value);
+        kv_storage.call_store_u64(KEY_NAME.to_string(), updated_value);
         let value: u64 = kv_storage.query_contract(&KEY_NAME).unwrap();
         assert_eq!(value, 2);
     }
@@ -68,43 +67,36 @@ mod tests {
     #[test]
     fn should_update_string() {
         const KEY_NAME: &str = "teststring";
-        const KEY_TYPE: &str = "string";
         let mut kv_storage = KVstorageContract::deploy();
-        let args = (KEY_NAME, KEY_TYPE, String::from("Hello World"));
-        kv_storage.call_indirect(args);
-        let update_args = (KEY_NAME, KEY_TYPE, String::from("Goodbye friend"));
-        kv_storage.call_indirect(update_args);
+        let original_value:String = String::from("Hello");
+        let updated_value: String = String::from("World");
+        kv_storage.call_store_string(KEY_NAME.to_string(), original_value);
+        kv_storage.call_store_string(KEY_NAME.to_string(), updated_value);
         let value: String = kv_storage.query_contract(&KEY_NAME).unwrap();
-        assert_eq!(value, String::from("Goodbye friend"));
+        assert_eq!(value, String::from("World"));
     }
 
     #[test]
-    #[ignore]
     fn should_update_u512() {
         const KEY_NAME: &str = "testU512";
-        const KEY_TYPE: &str = "U512";
         let mut kv_storage = KVstorageContract::deploy();
-        let args = (KEY_NAME, KEY_TYPE, U512::from(100));
-        kv_storage.call_indirect(args);
-        let update_args = (KEY_NAME, KEY_TYPE, U512::from(200));
-        kv_storage.call_indirect(update_args);
+        let original_value: U512 = U512::from(100);
+        let updated_value: U512 = U512::from(200);
+        kv_storage.call_store_u512(KEY_NAME.to_string(), original_value);
+        kv_storage.call_store_u512(KEY_NAME.to_string(), updated_value);
         let value: U512 = kv_storage.query_contract(&KEY_NAME).unwrap();
         assert_eq!(value, U512::from(200));
     }
     #[test]
-    #[ignore]
     fn should_update_public_key() {
-        const BOB_ACCOUNT: AccountHash = AccountHash::new([7u8; 32]);
-        const ALI_ACCOUNT: AccountHash = AccountHash::new([3u8; 32]);
         const KEY_NAME: &str = "testAccountHash";
-        const KEY_TYPE: &str = "public_key";
         let mut kv_storage = KVstorageContract::deploy();
-        let args = (KEY_NAME, KEY_TYPE, BOB_ACCOUNT);
-        kv_storage.call_indirect(args);
-        let update_args = (KEY_NAME, KEY_TYPE, ALI_ACCOUNT);
-        kv_storage.call_indirect(update_args);
+        let original_value: AccountHash = AccountHash::new([7u8; 32]);
+        let updated_value: AccountHash = AccountHash::new([3u8; 32]);
+        kv_storage.call_store_account(KEY_NAME.to_string(), original_value);
+        kv_storage.call_store_account(KEY_NAME.to_string(), updated_value);
         let value: AccountHash = kv_storage.query_contract(&KEY_NAME).unwrap();
-        assert_eq!(value, ALI_ACCOUNT);
+        assert_eq!(value, updated_value);
     }
-    */
+    
 }
