@@ -18,7 +18,6 @@ mod tests {
         assert_eq!(value, check);
     }
 
-    
     #[test]
     fn should_store_string() {
         const KEY_NAME: &str = "test_string";
@@ -40,7 +39,7 @@ mod tests {
         let check: U512 = kv_storage.query_contract(&KEY_NAME).unwrap();
         assert_eq!(value, check);
     }
-  
+
     #[test]
     fn should_store_public_key() {
         const KEY_NAME: &str = "testpublickey";
@@ -51,7 +50,7 @@ mod tests {
         let check: AccountHash = kv_storage.query_contract(&KEY_NAME).unwrap();
         assert_eq!(value, check);
     }
-    
+
     #[test]
     fn should_update_u64() {
         const KEY_NAME: &str = "testu64";
@@ -68,7 +67,7 @@ mod tests {
     fn should_update_string() {
         const KEY_NAME: &str = "teststring";
         let mut kv_storage = KVstorageContract::deploy();
-        let original_value:String = String::from("Hello");
+        let original_value: String = String::from("Hello");
         let updated_value: String = String::from("World");
         kv_storage.call_store_string(KEY_NAME.to_string(), original_value);
         kv_storage.call_store_string(KEY_NAME.to_string(), updated_value);
@@ -98,5 +97,4 @@ mod tests {
         let value: AccountHash = kv_storage.query_contract(&KEY_NAME).unwrap();
         assert_eq!(value, updated_value);
     }
-    
 }
