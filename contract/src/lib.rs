@@ -24,7 +24,6 @@ mod kvstorage_contract {
 
     #[casperlabs_method]
     fn store_u64(name: String, value: u64) {
-        println!("{}", value);
         set_key(name.as_str(), value);
     }
 
