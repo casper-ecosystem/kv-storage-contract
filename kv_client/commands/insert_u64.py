@@ -3,7 +3,7 @@ from typing import Dict
 from kv_storage_client import KVStorageClient
 
 NAME: str = "insert_u64"
-HELP: str = "Insert or update a u64 value with a given key name"
+HELP: str = "Insert or update a value with a given key name"
 OPTIONS = [
 	[
 		("-f","--from-addr"),
@@ -42,12 +42,12 @@ OPTIONS = [
 		),
 	],
 	[
-		("-v","--value-u64"),
+		("-v","--value"),
 		dict(
 			required=True,
 			type=int,
 			default=None,
-			help="A u64 value that will be saved under the given name"
+			help="A value that will be saved under the given name"
 		),
 	],
 	[
@@ -67,6 +67,6 @@ def method(client: KVStorageClient, args: Dict):
 		private_key=args.get("private_key"),
 		session_hash=args.get("session_hash"),
 		name=args.get("key"),
-		u64_value=args.get("value_u64"),
+		u64_value=args.get("value"),
 		block=args.get("blocking"),
 	)

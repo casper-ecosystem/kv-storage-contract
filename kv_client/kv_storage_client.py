@@ -43,14 +43,14 @@ class KVStorageClient:
 		print(self.client.queryState(block_hash, public_key, key,'address'))
 
 
-	def insert_value_with_type(self, from_addr, private_key, session_hash, name,value_type,last_arg, block):
-		args = [abi.ABI.string_value("name",name),abi.ABI.string_value("type",value_type),last_arg]	
+	def insert_value_with_type(self, from_addr, private_key, session_hash, name, entry_point,last_arg, block):
+		args = [abi.ABI.string_value("name",name),last_arg]	
 		deploy_hash = self.client.deploy(from_addr = from_addr ,
 							private_key=private_key,
-							gas_price=10,
 							payment_amount=2000000,
-							session_hash=bytes.fromhex(session_hash),
-							session_args=abi.ABI.args(args))
+							session_hash=session_hash,
+							session_entry_point=entry_point,
+							session_args=args)
 		if block:
 			print("Insert complete. Waiting for deploy to be processed.")
 			time.sleep(5)
@@ -59,21 +59,21 @@ class KVStorageClient:
 
 	def insert_u64(self, from_addr ,private_key, session_hash, name, u64_value, block):
 		print(private_key, session_hash, name, u64_value,block)
-		last_arg = abi.ABI.long_value("value",u64_value)
-		self.insert_value_with_type(from_addr, private_key, session_hash, name, "u64", last_arg, block)
+		last_arg = abi.ABI.u64("value",u64_value)
+		self.insert_value_with_type(from_addr, private_key, session_hash, name, "store_u64" ,last_arg, block)
 
-	def insert_string(self, from_addr, private_key, session_hash, name, string_value, block):
+	def insert_string(self, from_addr, private_key, session_hash, name, entry_point ,string_value, block):
 		last_arg = abi.ABI.string_value("value",string_value)
-		self.insert_value_with_type(from_addr, private_key, session_hash, name, "string",last_arg, block)
+		self.insert_value_with_type(from_addr, private_key, session_hash, name,last_arg, block)
 
 	def insert_u512(self, from_addr, private_key, session_hash, name, u512_value, block):
 		print(u512_value)
 		last_arg = abi.ABI.big_int("value", u512_value)
-		self.insert_value_with_type(from_addr, private_key, session_hash, name, "U512" ,last_arg, block)
+		self.insert_value_with_type(from_addr, private_key, session_hash, name, u512_value, block)
 
 	def insert_publickey(self, from_addr, private_key, session_hash, name, key_value, block):
 		last_arg = abi.ABI.account("value",key_value)
-		self.insert_value_with_type(from_addr, private_key, session_hash, name, "public_key" ,last_arg, block)
+		self.insert_value_with_type(from_addr, private_key, session_hash, name,last_arg, block)
 
 
 
