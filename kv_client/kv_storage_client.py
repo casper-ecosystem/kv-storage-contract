@@ -15,7 +15,6 @@ class KVStorageClient:
 		deploy_hash = self.client.deploy(
 							from_addr = from_addr,
 							private_key = private_key,
-							gas_price=10,
 							payment_amount=2000000,
 							session=contract_wasm_location)
 		print("Deploy complete. Waiting for deploy to be processed")
