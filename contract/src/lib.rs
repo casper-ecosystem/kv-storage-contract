@@ -29,12 +29,12 @@ mod kvstorage_contract {
 
     #[casperlabs_method]
     fn get_u64(name: String) -> u64 {
-        key(name.as_str())
+        get_key(name.as_str())
     }
 
     #[casperlabs_method]
     fn get_string(name: String) -> String {
-        key(name.as_str())
+        get_key(name.as_str())
     }
 
     #[casperlabs_method]
@@ -52,12 +52,14 @@ mod kvstorage_contract {
         set_key(name.as_str(), value);
     }
 
-    fn key<T: FromBytes + CLTyped>(name: &str) -> T {
-        let key = runtime::get_key(name)
-            .unwrap_or_revert()
-            .try_into()
-            .unwrap_or_revert();
-        storage::read(key).unwrap_or_revert().unwrap_or_revert()
+    fn get_key<T: FromBytes + CLTyped + Default>(name: &str) -> T {
+        match runtime::get_key(name) {
+            None => Default::default(),
+            Some(value) => {
+                let key = value.try_into().unwrap_or_revert();
+                storage::read(key).unwrap_or_revert().unwrap_or_revert()
+            }
+        }
     }
 
     fn set_key<T: ToBytes + CLTyped>(name: &str, value: T) {
