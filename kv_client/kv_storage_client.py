@@ -58,22 +58,20 @@ class KVStorageClient:
 			print("Lastest block hash for most recent query: [%s]" % self.block_hash)
 
 	def insert_u64(self, from_addr ,private_key, session_hash, name, u64_value, block):
-		print(private_key, session_hash, name, u64_value,block)
 		last_arg = abi.ABI.u64("value",u64_value)
 		self.insert_value_with_type(from_addr, private_key, session_hash, name, "store_u64" ,last_arg, block)
 
 	def insert_string(self, from_addr, private_key, session_hash, name, entry_point ,string_value, block):
 		last_arg = abi.ABI.string_value("value",string_value)
-		self.insert_value_with_type(from_addr, private_key, session_hash, name,last_arg, block)
+		self.insert_value_with_type(from_addr, private_key, session_hash, name, "store_string",last_arg, block)
 
 	def insert_u512(self, from_addr, private_key, session_hash, name, u512_value, block):
-		print(u512_value)
 		last_arg = abi.ABI.big_int("value", u512_value)
-		self.insert_value_with_type(from_addr, private_key, session_hash, name, u512_value, block)
+		self.insert_value_with_type(from_addr, private_key, session_hash, name, "store_u512", last_arg, block)
 
 	def insert_publickey(self, from_addr, private_key, session_hash, name, key_value, block):
 		last_arg = abi.ABI.account("value",key_value)
-		self.insert_value_with_type(from_addr, private_key, session_hash, name,last_arg, block)
+		self.insert_value_with_type(from_addr, private_key, session_hash, name, "store_account_hash",last_arg, block)
 
 
 
