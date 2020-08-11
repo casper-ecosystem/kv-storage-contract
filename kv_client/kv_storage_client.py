@@ -28,22 +28,23 @@ class KVStorageClient:
 
 	def session_code_hash(self, block_hash, public_key):
 		print("Start %s" % time.ctime())
-		time.sleep(5)
+		time.sleep(10)
 		print("End %s" % time.ctime())
-		maybe_code = self.client.queryState(block_hash,public_key,"kv_storage",'address')
+		maybe_code = self.client.queryState(block_hash,public_key,"kvstorage_contract_hash",'address')
 		if not maybe_code:
 			self.deploy(True)
 			self.session_code_hash(public_key)
-		self.session_hash = maybe_code.cl_value.value.key.hash.hash
-		print("Current Session Hash: [%s]" % self.session_hash.hex()) 
+		self.session_hash = maybe_code.cl_value.value.bytes_value.hex()
+		print("Current Session Hash: [%s]" % self.session_hash) 
 		print("Current Block Hash: [%s]" % block_hash)
 
 	def read_key(self, block_hash, public_key, key):
-		print(self.client.queryState(block_hash, public_key, key,'address'))
+		print(self.client.queryState(block_hash, public_key, "kvstorage_contract/"+key,'address'))
 
 
 	def insert_value_with_type(self, from_addr, private_key, session_hash, name, entry_point,last_arg, block):
 		args = [abi.ABI.string_value("name",name),last_arg]	
+		print(args)
 		deploy_hash = self.client.deploy(from_addr = from_addr ,
 							private_key=private_key,
 							payment_amount=2000000,
