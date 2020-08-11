@@ -26,17 +26,7 @@ mod kvstorage_contract {
     fn store_u64(name: String, value: u64) {
         set_key(name.as_str(), value);
     }
-
-    #[casperlabs_method]
-    fn get_u64(name: String) -> u64 {
-        get_key(name.as_str())
-    }
-
-    #[casperlabs_method]
-    fn get_string(name: String) -> String {
-        get_key(name.as_str())
-    }
-
+    
     #[casperlabs_method]
     fn store_u512(name: String, value: U512) {
         set_key(name.as_str(), value);
