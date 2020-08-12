@@ -42,6 +42,11 @@ mod kvstorage_contract {
         set_key(name.as_str(), value);
     }
 
+    #[casperlabs_method]
+    fn store_bytes(name: String, value: Vec<u8>) {
+        set_key(name.as_str(), value);
+    }
+
     fn get_key<T: FromBytes + CLTyped + Default>(name: &str) -> T {
         match runtime::get_key(name) {
             None => Default::default(),

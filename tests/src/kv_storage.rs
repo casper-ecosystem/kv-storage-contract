@@ -77,6 +77,19 @@ impl KVstorageContract {
         self.context.run(session);
     }
 
+    pub fn call_store_bytes(&mut self, name: String, value: Vec<u8>) {
+        let code = Code::Hash(self.kvstorage_hash, "store_bytes".to_string());
+        let args = runtime_args! {
+            "name" => name,
+            "value" => value,
+        };
+        let session = SessionBuilder::new(code, args)
+            .with_address(TEST_ACCOUNT)
+            .with_authorization_keys(&[TEST_ACCOUNT])
+            .build();
+        self.context.run(session);
+    }
+
     pub fn call_store_account(&mut self, name: String, value: AccountHash) {
         let code = Code::Hash(self.kvstorage_hash, "store_account_hash".to_string());
         let args = runtime_args! {
