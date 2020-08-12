@@ -30,6 +30,18 @@ mod tests {
     }
 
     #[test]
+    fn should_store_bytes() {
+        let KEY_NAME: &str = "test_bytes";
+        let mut kv_storage = KVstorageContract::deploy();
+        let name: String = String::from("test_bytes");
+        let value: Vec<u8> = vec![0x41u8, 0x41u8, 0x42u8];
+        let value2 = value.clone();
+        kv_storage.call_store_bytes(name, value);
+        let check: Vec<u8> = kv_storage.query_contract(&KEY_NAME).unwrap();
+        assert_eq!(value2, check);
+    }
+
+    #[test]
     fn should_store_u512() {
         const KEY_NAME: &str = "test_u512";
         let mut kv_storage = KVstorageContract::deploy();
