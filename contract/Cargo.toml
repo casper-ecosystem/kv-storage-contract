@@ -9,7 +9,7 @@ edition = "2018"
 [dependencies]
 contract = { git="https://github.com/CasperLabs/CasperLabs", branch="dev", package = "casperlabs-contract" }
 types = { git="https://github.com/CasperLabs/CasperLabs", branch="dev", package = "casperlabs-types" }
-contract_macro = { git = "https://github.com/CasperLabs/casperlabs_contract_macro", branch = "in_progress", package = "contract_macro"}
+contract_macro = { git = "https://github.com/CasperLabs/casperlabs_contract_macro", branch = "ECO-608-Support-CL-Types", package = "contract_macro"}
 
 [lib]
 crate-type = ["cdylib"]
