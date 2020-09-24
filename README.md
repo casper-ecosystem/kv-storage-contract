@@ -1,3 +1,12 @@
+## How to understand the contract
+Refer to this [guide](https://docs.casperlabs.io/en/latest/dapp-dev-guide/kv-storage-tutorial.html) to understand the Key-Value contract works, in additional to some detail on how the Casperlabs Contract DSL works. 
+
+## Online IDE
+Follow this link to execute this contract in an online IDE.
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#snapshot/9fcfabb4-fe86-4452-8881-28bcbb4b5806)
+
+
+
 ## Deploying to the Testnet and Interacting with the Contract
 There is a standalone python cli application that you can use for the kvstorage contract. When working with the testnet, create an account in [CLarity](https://clarity.casperlabs.io) and fund it using the faucet. Download the private key and use the key to sign the deployment. It's possible to create keys using the python client as well.
 
