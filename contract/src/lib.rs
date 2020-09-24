@@ -2,7 +2,7 @@ extern crate alloc;
 use alloc::{collections::BTreeSet, string::String};
 use std::convert::TryInto;
 
-use contract_macro::{casperlabs_constructor, casperlabs_contract, casperlabs_method};
+use casperlabs_contract_macro::{casperlabs_constructor, casperlabs_contract, casperlabs_method};
 
 use contract::{
     contract_api::{runtime, storage},
@@ -11,7 +11,7 @@ use contract::{
 
 use types::{
     account::AccountHash,
-    bytesrepr::{FromBytes, ToBytes},
+    bytesrepr::ToBytes,
     contracts::{EntryPoint, EntryPointAccess, EntryPointType, EntryPoints},
     runtime_args, CLType, CLTyped, CLValue, Group, Parameter, RuntimeArgs, URef, U512,
 };
@@ -26,7 +26,7 @@ mod kvstorage_contract {
     fn store_u64(name: String, value: u64) {
         set_key(name.as_str(), value);
     }
-    
+
     #[casperlabs_method]
     fn store_u512(name: String, value: U512) {
         set_key(name.as_str(), value);
@@ -45,16 +45,6 @@ mod kvstorage_contract {
     #[casperlabs_method]
     fn store_bytes(name: String, value: Vec<u8>) {
         set_key(name.as_str(), value);
-    }
-
-    fn get_key<T: FromBytes + CLTyped + Default>(name: &str) -> T {
-        match runtime::get_key(name) {
-            None => Default::default(),
-            Some(value) => {
-                let key = value.try_into().unwrap_or_revert();
-                storage::read(key).unwrap_or_revert().unwrap_or_revert()
-            }
-        }
     }
 
     fn set_key<T: ToBytes + CLTyped>(name: &str, value: T) {

@@ -31,7 +31,7 @@ mod tests {
 
     #[test]
     fn should_store_bytes() {
-        let KEY_NAME: &str = "test_bytes";
+        const KEY_NAME: &str = "test_bytes";
         let mut kv_storage = KVstorageContract::deploy();
         let name: String = String::from("test_bytes");
         let value: Vec<u8> = vec![0x41u8, 0x41u8, 0x42u8];
