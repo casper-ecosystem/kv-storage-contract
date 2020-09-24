@@ -53,10 +53,10 @@ mod tests {
     }
 
     #[test]
-    fn should_store_public_key() {
-        const KEY_NAME: &str = "testpublickey";
+    fn should_store_account_hash() {
+        const KEY_NAME: &str = "test_account_hash";
         let mut kv_storage = KVstorageContract::deploy();
-        let name: String = String::from("testpublickey");
+        let name: String = String::from("test_account_hash");
         let value: AccountHash = AccountHash::new([7u8; 32]);
         kv_storage.call_store_account(name, value);
         let check: AccountHash = kv_storage.query_contract(&KEY_NAME).unwrap();
@@ -99,7 +99,7 @@ mod tests {
         assert_eq!(value, U512::from(200));
     }
     #[test]
-    fn should_update_public_key() {
+    fn should_update_account_hash() {
         const KEY_NAME: &str = "testAccountHash";
         let mut kv_storage = KVstorageContract::deploy();
         let original_value: AccountHash = AccountHash::new([7u8; 32]);

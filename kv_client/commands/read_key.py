@@ -7,7 +7,7 @@ HELP: str = ("Return a CLType object stored under the given named key")
 
 OPTIONS = [
 	[
-		("-bh","--block-hash"),
+		("-b","--block-hash"),
 		dict(
 			required=True,
 			type=str,
@@ -16,7 +16,7 @@ OPTIONS = [
 		),
 	],
 	[
-		("-p","--public-key"),
+		("-a","--account-hash"),
 		dict(
 			required=True,
 			type=str,
@@ -38,6 +38,6 @@ OPTIONS = [
 def method(client: KVStorageClient, args: Dict):
 	client.read_key(
 		block_hash=args.get("block_hash"),
-		public_key=args.get("public_key"),
+		public_key=args.get("account_hash"),
 		key=args.get("key"),
 	)

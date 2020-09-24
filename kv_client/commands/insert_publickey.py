@@ -2,8 +2,8 @@ from typing import Dict
 
 from kv_storage_client import KVStorageClient
 
-NAME: str = "insert_publickey"
-HELP: str = "Insert or update a PublicKey value with a given key name"
+NAME: str = "insert_account_hash"
+HELP: str = "Insert or update a Account Hash value with a given key name"
 OPTIONS = [
 	[
 		("-f","--from-addr"),
@@ -42,7 +42,7 @@ OPTIONS = [
 		),
 	],
 	[
-		("-v","--value-publickey"),
+		("-v","--value-account-hash"),
 		dict(
 			required=True,
 			type=str,
@@ -68,6 +68,6 @@ def method(client: KVStorageClient, args: Dict):
 		private_key=args.get("private_key"),
 		session_hash=args.get("session_hash"),
 		name=args.get("key"),
-		key_value=args.get("value_publickey"),
+		key_value=args.get("value_account_hash"),
 		block=args.get("blocking"),
 	)
