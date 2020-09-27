@@ -8,4 +8,4 @@ FROM gitpod/workspace-full
 RUN sudo apt-get -y install \
               protobuf-compiler libprotobuf-dev 
 RUN sudo apt clean
-
+RUN pip install casperlabs-client
