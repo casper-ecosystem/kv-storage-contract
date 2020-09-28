@@ -3,8 +3,7 @@ Refer to this [guide](https://docs.casperlabs.io/en/latest/dapp-dev-guide/kv-sto
 
 ## Online IDE
 Follow this link to execute this contract in an online IDE.
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#snapshot/9fcfabb4-fe86-4452-8881-28bcbb4b5806)
-
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#snapshot/bf7aa913-4614-4fe2-aa06-da5876a75bfa)
 
 
 ## Deploying to the Testnet and Interacting with the Contract
