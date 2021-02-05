@@ -25,7 +25,7 @@ impl KVstorageContract {
     pub fn deploy() -> Self {
         let test_account_public_key: PublicKey = SecretKey::ed25519(TEST_ACCOUNT).into();
         let mut context = TestContextBuilder::new()
-            .with_public_key(test_account_public_key, TEST_ACCOUNT_HASH, U512::from(128_000_000))
+            .with_public_key(test_account_public_key, TEST_ACCOUNT_HASH, U512::from(128_000_000_000_000u64))
             .build();
         let session_code = Code::from("contract.wasm");
         let session = SessionBuilder::new(session_code, runtime_args! {})
