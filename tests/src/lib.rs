@@ -4,7 +4,7 @@ mod kv_storage;
 #[cfg(test)]
 mod tests {
     use super::kv_storage;
-    use casperlabs_types::{account::AccountHash, U512};
+    use casper_types::{account::AccountHash, U512};
     use kv_storage::KVstorageContract;
 
     #[test]

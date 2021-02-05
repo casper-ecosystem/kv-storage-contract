@@ -1,9 +1,18 @@
-use casperlabs_engine_test_support::{Code, Hash, SessionBuilder, TestContext, TestContextBuilder};
-use casperlabs_types::{
-    account::AccountHash, bytesrepr::FromBytes, runtime_args, CLTyped, RuntimeArgs, U512,
+use casper_engine_test_support::{Code, Hash, SessionBuilder, TestContext, TestContextBuilder};
+use casper_types::{
+    account::AccountHash,
+    bytesrepr::FromBytes,
+    runtime_args,
+    CLTyped,
+    RuntimeArgs,
+    U512,
+    PublicKey,
+    SecretKey
 };
 
-pub const TEST_ACCOUNT: AccountHash = AccountHash::new([7u8; 32]);
+pub const TEST_ACCOUNT: [u8; 32] = [7u8; 32];
+pub const TEST_ADDRESS: [u8; 32] = [8u8; 32];
+pub const TEST_ACCOUNT_HASH: AccountHash = AccountHash::new(TEST_ADDRESS);
 pub const KV_STORAGE: &str = "kvstorage_contract";
 pub const KV_STORAGE_HASH: &str = "kvstorage_contract_hash";
 
@@ -14,13 +23,14 @@ pub struct KVstorageContract {
 
 impl KVstorageContract {
     pub fn deploy() -> Self {
+        let test_account_public_key: PublicKey = SecretKey::ed25519(TEST_ACCOUNT).into();
         let mut context = TestContextBuilder::new()
-            .with_account(TEST_ACCOUNT, U512::from(128_000_000))
+            .with_public_key(test_account_public_key, TEST_ACCOUNT_HASH, U512::from(128_000_000_000_000u64))
             .build();
         let session_code = Code::from("contract.wasm");
         let session = SessionBuilder::new(session_code, runtime_args! {})
-            .with_address(TEST_ACCOUNT)
-            .with_authorization_keys(&[TEST_ACCOUNT])
+            .with_address(TEST_ACCOUNT_HASH)
+            .with_authorization_keys(&[TEST_ACCOUNT_HASH])
             .build();
         context.run(session);
         let kvstorage_hash = Self::contract_hash(&context, KV_STORAGE_HASH);
@@ -32,7 +42,7 @@ impl KVstorageContract {
 
     pub fn contract_hash(context: &TestContext, name: &str) -> Hash {
         context
-            .query(TEST_ACCOUNT, &[name])
+            .query(TEST_ACCOUNT_HASH, &[name.to_string()])
             .unwrap_or_else(|_| panic!("{} contract not found", name))
             .into_t()
             .unwrap_or_else(|_| panic!("{} is not a type Contract.", name))
@@ -45,8 +55,8 @@ impl KVstorageContract {
             "value" => value,
         };
         let session = SessionBuilder::new(code, args)
-            .with_address(TEST_ACCOUNT)
-            .with_authorization_keys(&[TEST_ACCOUNT])
+            .with_address(TEST_ACCOUNT_HASH)
+            .with_authorization_keys(&[TEST_ACCOUNT_HASH])
             .build();
         self.context.run(session);
     }
@@ -58,8 +68,8 @@ impl KVstorageContract {
             "value" => value,
         };
         let session = SessionBuilder::new(code, args)
-            .with_address(TEST_ACCOUNT)
-            .with_authorization_keys(&[TEST_ACCOUNT])
+            .with_address(TEST_ACCOUNT_HASH)
+            .with_authorization_keys(&[TEST_ACCOUNT_HASH])
             .build();
         self.context.run(session);
     }
@@ -71,8 +81,8 @@ impl KVstorageContract {
             "value" => value,
         };
         let session = SessionBuilder::new(code, args)
-            .with_address(TEST_ACCOUNT)
-            .with_authorization_keys(&[TEST_ACCOUNT])
+            .with_address(TEST_ACCOUNT_HASH)
+            .with_authorization_keys(&[TEST_ACCOUNT_HASH])
             .build();
         self.context.run(session);
     }
@@ -84,8 +94,8 @@ impl KVstorageContract {
             "value" => value,
         };
         let session = SessionBuilder::new(code, args)
-            .with_address(TEST_ACCOUNT)
-            .with_authorization_keys(&[TEST_ACCOUNT])
+            .with_address(TEST_ACCOUNT_HASH)
+            .with_authorization_keys(&[TEST_ACCOUNT_HASH])
             .build();
         self.context.run(session);
     }
@@ -97,8 +107,8 @@ impl KVstorageContract {
             "value" => value,
         };
         let session = SessionBuilder::new(code, args)
-            .with_address(TEST_ACCOUNT)
-            .with_authorization_keys(&[TEST_ACCOUNT])
+            .with_address(TEST_ACCOUNT_HASH)
+            .with_authorization_keys(&[TEST_ACCOUNT_HASH])
             .build();
         self.context.run(session);
     }
@@ -106,7 +116,7 @@ impl KVstorageContract {
     pub fn query_contract<T: CLTyped + FromBytes>(&self, name: &str) -> Option<T> {
         match self
             .context
-            .query(TEST_ACCOUNT, &[KV_STORAGE, &name.to_string()])
+            .query(TEST_ACCOUNT_HASH, &[KV_STORAGE.to_string(), name.to_string()])
         {
             Err(_) => None,
             Ok(maybe_value) => {
