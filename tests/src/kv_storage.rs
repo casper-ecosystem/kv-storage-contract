@@ -1,8 +1,7 @@
 use casper_engine_test_support::{Code, Hash, SessionBuilder, TestContext, TestContextBuilder};
 use casper_types::{
     account::AccountHash,
-    bytesrepr::FromBytes,
-    bytesrepr::Bytes,
+    bytesrepr::{Bytes, FromBytes},
     runtime_args,
     CLTyped,
     RuntimeArgs,
