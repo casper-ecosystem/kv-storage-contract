@@ -1,7 +1,7 @@
 use casper_engine_test_support::{Code, Hash, SessionBuilder, TestContext, TestContextBuilder};
 use casper_types::{
     account::AccountHash,
-    bytesrepr::FromBytes,
+    bytesrepr::{Bytes, FromBytes},
     runtime_args,
     CLTyped,
     RuntimeArgs,
@@ -87,7 +87,7 @@ impl KVstorageContract {
         self.context.run(session);
     }
 
-    pub fn call_store_bytes(&mut self, name: String, value: Vec<u8>) {
+    pub fn call_store_bytes(&mut self, name: String, value: Bytes) {
         let code = Code::Hash(self.kvstorage_hash, "store_bytes".to_string());
         let args = runtime_args! {
             "name" => name,

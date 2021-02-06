@@ -4,7 +4,7 @@ mod kv_storage;
 #[cfg(test)]
 mod tests {
     use super::kv_storage;
-    use casper_types::{account::AccountHash, U512};
+    use casper_types::{account::AccountHash, U512, bytesrepr::Bytes};
     use kv_storage::KVstorageContract;
 
     #[test]
@@ -34,10 +34,10 @@ mod tests {
         const KEY_NAME: &str = "test_bytes";
         let mut kv_storage = KVstorageContract::deploy();
         let name: String = String::from("test_bytes");
-        let value: Vec<u8> = vec![0x41u8, 0x41u8, 0x42u8];
+        let value: Bytes = vec![0x41u8, 0x41u8, 0x42u8].into();
         let value2 = value.clone();
         kv_storage.call_store_bytes(name, value);
-        let check: Vec<u8> = kv_storage.query_contract(&KEY_NAME).unwrap();
+        let check: Bytes = kv_storage.query_contract(&KEY_NAME).unwrap();
         assert_eq!(value2, check);
     }
 
