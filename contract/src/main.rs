@@ -1,3 +1,8 @@
+#![no_main]
+#![allow(unused_imports)]
+#![allow(unused_parens)]
+#![allow(non_snake_case)]
+
 extern crate alloc;
 use alloc::{collections::BTreeSet, string::String};
 use std::convert::TryInto;
@@ -13,9 +18,6 @@ use types::{
     contracts::{EntryPoint, EntryPointAccess, EntryPointType, EntryPoints},
     runtime_args, CLType, CLTyped, Group, Parameter, RuntimeArgs, URef, U512,
 };
-
-#[no_mangle]
-pub extern "C" fn init() {}
 
 #[no_mangle]
 pub extern "C" fn store_u64() {
@@ -55,25 +57,7 @@ pub extern "C" fn store_bytes() {
 #[no_mangle]
 pub extern "C" fn call() {
     let (contract_package_hash, _) = storage::create_contract_package_at_hash();
-    let _constructor_access_uref: URef = storage::create_contract_user_group(
-        contract_package_hash,
-        "constructor_group",
-        1,
-        BTreeSet::new(),
-    )
-    .unwrap_or_revert()
-    .pop()
-    .unwrap_or_revert();
-    let constructor_group = Group::new("constructor_group");
     let mut entry_points = EntryPoints::new();
-
-    entry_points.add_entry_point(EntryPoint::new(
-        String::from("init"),
-        vec![],
-        CLType::Unit,
-        EntryPointAccess::Groups(vec![constructor_group]),
-        EntryPointType::Contract,
-    ));
 
     entry_points.add_entry_point(EntryPoint::new(
         String::from("store_u64"),
@@ -134,8 +118,7 @@ pub extern "C" fn call() {
         storage::add_contract_version(contract_package_hash, entry_points, Default::default());
     runtime::put_key("kvstorage_contract", contract_hash.into());
     let contract_hash_pack = storage::new_uref(contract_hash);
-    runtime::put_key("kvstorage_contract_hash", contract_hash_pack.into());
-    runtime::call_contract::<()>(contract_hash, "init", runtime_args! {});
+    runtime::put_key("kvstorage_contract_hash", contract_hash_pack.into())
 }
 
 fn set_key<T: ToBytes + CLTyped>(name: &str, value: T) {
