@@ -7,108 +7,83 @@ use casper_types::{
     RuntimeArgs,
     U512,
     PublicKey,
-    SecretKey
+    AsymmetricType
 };
 
-pub const TEST_ACCOUNT: [u8; 32] = [7u8; 32];
-pub const TEST_ADDRESS: [u8; 32] = [8u8; 32];
-pub const TEST_ACCOUNT_HASH: AccountHash = AccountHash::new(TEST_ADDRESS);
 pub const KV_STORAGE: &str = "kvstorage_contract";
 pub const KV_STORAGE_HASH: &str = "kvstorage_contract_hash";
 
 pub struct KVstorageContract {
     pub context: TestContext,
     pub kvstorage_hash: Hash,
+    pub account: AccountHash
 }
 
 impl KVstorageContract {
     pub fn deploy() -> Self {
-        let test_account_public_key: PublicKey = SecretKey::ed25519(TEST_ACCOUNT).into();
+        let account = PublicKey::ed25519_from_bytes([3u8; 32]).unwrap();
         let mut context = TestContextBuilder::new()
-            .with_public_key(test_account_public_key, TEST_ACCOUNT_HASH, U512::from(128_000_000_000_000u64))
+            .with_public_key(account, U512::from(500_000_000_000_000_000u64))
             .build();
         let session_code = Code::from("contract.wasm");
         let session = SessionBuilder::new(session_code, runtime_args! {})
-            .with_address(TEST_ACCOUNT_HASH)
-            .with_authorization_keys(&[TEST_ACCOUNT_HASH])
+            .with_address(account.to_account_hash())
+            .with_authorization_keys(&[account.to_account_hash()])
             .build();
         context.run(session);
-        let kvstorage_hash = Self::contract_hash(&context, KV_STORAGE_HASH);
+        let kvstorage_hash = context
+            .query(account.to_account_hash(), &[KV_STORAGE_HASH.to_string()])
+            .unwrap()
+            .into_t()
+            .unwrap();
+
         Self {
             context,
             kvstorage_hash,
+            account: account.to_account_hash()
         }
     }
 
-    pub fn contract_hash(context: &TestContext, name: &str) -> Hash {
-        context
-            .query(TEST_ACCOUNT_HASH, &[name.to_string()])
-            .unwrap_or_else(|_| panic!("{} contract not found", name))
-            .into_t()
-            .unwrap_or_else(|_| panic!("{} is not a type Contract.", name))
+    pub fn call_store_u64(&mut self, name: &str, value: u64) {
+        self.call("store_u64", runtime_args! {
+            "name" => name,
+            "value" => value
+        });
     }
 
-    pub fn call_store_u64(&mut self, name: String, value: u64) {
-        let code = Code::Hash(self.kvstorage_hash, "store_u64".to_string());
-        let args = runtime_args! {
+    pub fn call_store_string(&mut self, name: &str, value: String) {
+        self.call("store_string", runtime_args! {
             "name" => name,
-            "value" => value,
-        };
-        let session = SessionBuilder::new(code, args)
-            .with_address(TEST_ACCOUNT_HASH)
-            .with_authorization_keys(&[TEST_ACCOUNT_HASH])
-            .build();
-        self.context.run(session);
+            "value" => value
+        });
     }
 
-    pub fn call_store_string(&mut self, name: String, value: String) {
-        let code = Code::Hash(self.kvstorage_hash, "store_string".to_string());
-        let args = runtime_args! {
+    pub fn call_store_u512(&mut self, name: &str, value: U512) {
+        self.call("store_u512", runtime_args! {
             "name" => name,
-            "value" => value,
-        };
-        let session = SessionBuilder::new(code, args)
-            .with_address(TEST_ACCOUNT_HASH)
-            .with_authorization_keys(&[TEST_ACCOUNT_HASH])
-            .build();
-        self.context.run(session);
+            "value" => value
+        });
     }
 
-    pub fn call_store_u512(&mut self, name: String, value: U512) {
-        let code = Code::Hash(self.kvstorage_hash, "store_u512".to_string());
-        let args = runtime_args! {
+    pub fn call_store_bytes(&mut self, name: &str, value: Bytes) {
+        self.call("store_bytes", runtime_args! {
             "name" => name,
-            "value" => value,
-        };
-        let session = SessionBuilder::new(code, args)
-            .with_address(TEST_ACCOUNT_HASH)
-            .with_authorization_keys(&[TEST_ACCOUNT_HASH])
-            .build();
-        self.context.run(session);
+            "value" => value
+        });
     }
 
-    pub fn call_store_bytes(&mut self, name: String, value: Bytes) {
-        let code = Code::Hash(self.kvstorage_hash, "store_bytes".to_string());
-        let args = runtime_args! {
+    pub fn call_store_account(&mut self, name: &str, value: AccountHash) {
+        self.call("store_account_hash", runtime_args! {
             "name" => name,
-            "value" => value,
-        };
-        let session = SessionBuilder::new(code, args)
-            .with_address(TEST_ACCOUNT_HASH)
-            .with_authorization_keys(&[TEST_ACCOUNT_HASH])
-            .build();
-        self.context.run(session);
+            "value" => value
+        });
     }
 
-    pub fn call_store_account(&mut self, name: String, value: AccountHash) {
-        let code = Code::Hash(self.kvstorage_hash, "store_account_hash".to_string());
-        let args = runtime_args! {
-            "name" => name,
-            "value" => value,
-        };
+    fn call(&mut self, method: &str, args: RuntimeArgs) {
+        let code = Code::Hash(self.kvstorage_hash, method.to_string());
         let session = SessionBuilder::new(code, args)
-            .with_address(TEST_ACCOUNT_HASH)
-            .with_authorization_keys(&[TEST_ACCOUNT_HASH])
+            .with_address(self.account)
+            .with_authorization_keys(&[self.account])
             .build();
         self.context.run(session);
     }
@@ -116,7 +91,7 @@ impl KVstorageContract {
     pub fn query_contract<T: CLTyped + FromBytes>(&self, name: &str) -> Option<T> {
         match self
             .context
-            .query(TEST_ACCOUNT_HASH, &[KV_STORAGE.to_string(), name.to_string()])
+            .query(self.account, &[KV_STORAGE.to_string(), name.to_string()])
         {
             Err(_) => None,
             Ok(maybe_value) => {
