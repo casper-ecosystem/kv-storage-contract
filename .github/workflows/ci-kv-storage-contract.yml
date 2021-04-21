@@ -24,6 +24,7 @@ jobs:
     - uses: actions-rs/toolchain@v1
       with:
         profile: minimal
+        components: rustfmt, clippy
     # Needed for gcc install
     - run: sudo apt update && sudo apt install -y build-essential
     - run: make prepare
