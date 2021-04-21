@@ -12,13 +12,15 @@ copy-wasm-file-to-test:
 
 test: build-contract copy-wasm-file-to-test test-only
 
-check-lint:
-	cargo fmt --all -- --check
-
-lint:
-	cargo fmt --all
+clippy:
 	cargo clippy --all-targets --all -- -D warnings -A renamed_and_removed_lints
 
+check-lint: clippy
+	cargo fmt --all -- --check
+
+lint: clippy
+	cargo fmt --all
+	
 clean:
 	cargo clean
 	rm -rf tests/wasm/contract.wasm
