@@ -159,7 +159,10 @@ mod tests {
         let keys: Vec<String> = res.keys().cloned().collect();
         let values: Vec<Option<String>> = res.values().cloned().collect();
         assert_eq!(keys, [String::from("alice"), String::from("jane")]);
-        assert_eq!(values.get(1).unwrap(), &Some(String::from("Purchased Cake")));
+        assert_eq!(
+            values.get(1).unwrap(),
+            &Some(String::from("Purchased Cake"))
+        );
     }
     #[test]
     fn should_update_tuple() {
@@ -168,7 +171,7 @@ mod tests {
         let original_value = (
             PublicKey::ed25519_from_bytes([1u8; 32]).unwrap(),
             Some(String::from("Original")),
-            U512::from(100)
+            U512::from(100),
         );
         let updated_value = (
             PublicKey::ed25519_from_bytes([3u8; 32]).unwrap(),
