@@ -4,6 +4,7 @@ use casper_types::{
     bytesrepr::{Bytes, FromBytes},
     runtime_args, AsymmetricType, CLTyped, PublicKey, RuntimeArgs, U512,
 };
+use std::collections::BTreeMap;
 
 pub const KV_STORAGE: &str = "kvstorage_contract";
 pub const KV_STORAGE_HASH: &str = "kvstorage_contract_hash";
@@ -82,6 +83,66 @@ impl KVstorageContract {
     pub fn call_store_account(&mut self, name: &str, value: AccountHash) {
         self.call(
             "store_account_hash",
+            runtime_args! {
+                "name" => name,
+                "value" => value
+            },
+        );
+    }
+
+    pub fn call_store_public_key(&mut self, name: &str, value: PublicKey) {
+        self.call(
+            "store_public_key",
+            runtime_args! {
+                "name" => name,
+                "value" => value
+            },
+        );
+    }
+
+    pub fn call_store_option(&mut self, name: &str, value: Option<String>) {
+        self.call(
+            "store_option",
+            runtime_args! {
+                "name" => name,
+                "value" => value
+            },
+        );
+    }
+
+    pub fn call_store_result(&mut self, name: &str, value: Result<String, String>) {
+        self.call(
+            "store_result",
+            runtime_args! {
+                "name" => name,
+                "value" => value
+            },
+        );
+    }
+
+    pub fn call_store_byte_array(&mut self, name: &str, value: [u8; 3]) {
+        self.call(
+            "store_byte_array",
+            runtime_args! {
+                "name" => name,
+                "value" => value
+            },
+        );
+    }
+
+    pub fn call_store_map(&mut self, name: &str, value: BTreeMap<String, Option<String>>) {
+        self.call(
+            "store_map",
+            runtime_args! {
+                "name" => name,
+                "value" => value
+            },
+        );
+    }
+
+    pub fn call_store_tuple(&mut self, name: &str, value: (PublicKey, Option<String>, U512)) {
+        self.call(
+            "store_tuple",
             runtime_args! {
                 "name" => name,
                 "value" => value

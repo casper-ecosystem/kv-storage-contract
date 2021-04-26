@@ -5,7 +5,7 @@
 
 extern crate alloc;
 use alloc::{collections::BTreeSet, string::String};
-use std::convert::TryInto;
+use std::{collections::BTreeMap, convert::TryInto};
 
 use contract::{
     contract_api::{runtime, storage},
@@ -16,7 +16,7 @@ use types::{
     account::AccountHash,
     bytesrepr::ToBytes,
     contracts::{EntryPoint, EntryPointAccess, EntryPointType, EntryPoints},
-    runtime_args, CLType, CLTyped, Group, Parameter, RuntimeArgs, URef, U512,
+    runtime_args, CLType, CLTyped, Group, Parameter, PublicKey, RuntimeArgs, URef, U512,
 };
 
 #[no_mangle]
@@ -51,6 +51,48 @@ pub extern "C" fn store_account_hash() {
 pub extern "C" fn store_bytes() {
     let name: String = runtime::get_named_arg("name");
     let value: Vec<u8> = runtime::get_named_arg("value");
+    set_key(name.as_str(), value);
+}
+
+#[no_mangle]
+pub extern "C" fn store_public_key() {
+    let name: String = runtime::get_named_arg("name");
+    let value: PublicKey = runtime::get_named_arg("value");
+    set_key(name.as_str(), value);
+}
+
+#[no_mangle]
+pub extern "C" fn store_option() {
+    let name: String = runtime::get_named_arg("name");
+    let value: Option<String> = runtime::get_named_arg("value");
+    set_key(name.as_str(), value);
+}
+
+#[no_mangle]
+pub extern "C" fn store_result() {
+    let name: String = runtime::get_named_arg("name");
+    let value: Result<String, String> = runtime::get_named_arg("value");
+    set_key(name.as_str(), value);
+}
+
+#[no_mangle]
+pub extern "C" fn store_byte_array() {
+    let name: String = runtime::get_named_arg("name");
+    let value: [u8; 3] = runtime::get_named_arg("value");
+    set_key(name.as_str(), value);
+}
+
+#[no_mangle]
+pub extern "C" fn store_map() {
+    let name: String = runtime::get_named_arg("name");
+    let value: BTreeMap<String, Option<String>> = runtime::get_named_arg("value");
+    set_key(name.as_str(), value);
+}
+
+#[no_mangle]
+pub extern "C" fn store_tuple() {
+    let name: String = runtime::get_named_arg("name");
+    let value: (PublicKey, Option<String>, U512) = runtime::get_named_arg("value");
     set_key(name.as_str(), value);
 }
 
@@ -108,6 +150,91 @@ pub extern "C" fn call() {
         vec![
             Parameter::new("name", CLType::String),
             Parameter::new("value", CLType::List(Box::new(CLType::U8))),
+        ],
+        CLType::Unit,
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+
+    entry_points.add_entry_point(EntryPoint::new(
+        String::from("store_public_key"),
+        vec![
+            Parameter::new("name", CLType::String),
+            Parameter::new("value", CLType::PublicKey),
+        ],
+        CLType::Unit,
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+
+    entry_points.add_entry_point(EntryPoint::new(
+        String::from("store_option"),
+        vec![
+            Parameter::new("name", CLType::String),
+            Parameter::new("value", CLType::Option(Box::new(CLType::String))),
+        ],
+        CLType::Unit,
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+
+    entry_points.add_entry_point(EntryPoint::new(
+        String::from("store_result"),
+        vec![
+            Parameter::new("name", CLType::String),
+            Parameter::new(
+                "value",
+                CLType::Result {
+                    ok: Box::new(CLType::String),
+                    err: Box::new(CLType::String),
+                },
+            ),
+        ],
+        CLType::Unit,
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+
+    entry_points.add_entry_point(EntryPoint::new(
+        String::from("store_byte_array"),
+        vec![
+            Parameter::new("name", CLType::String),
+            Parameter::new("value", CLType::ByteArray(3)),
+        ],
+        CLType::Unit,
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+
+    entry_points.add_entry_point(EntryPoint::new(
+        String::from("store_map"),
+        vec![
+            Parameter::new("name", CLType::String),
+            Parameter::new(
+                "value",
+                CLType::Map {
+                    key: Box::new(CLType::String),
+                    value: Box::new(CLType::Option(Box::new(CLType::String))),
+                },
+            ),
+        ],
+        CLType::Unit,
+        EntryPointAccess::Public,
+        EntryPointType::Contract,
+    ));
+
+    entry_points.add_entry_point(EntryPoint::new(
+        String::from("store_tuple"),
+        vec![
+            Parameter::new("name", CLType::String),
+            Parameter::new(
+                "value",
+                CLType::Tuple3([
+                    Box::new(CLType::PublicKey),
+                    Box::new(CLType::Option(Box::new(CLType::String))),
+                    Box::new(CLType::U512),
+                ]),
+            ),
         ],
         CLType::Unit,
         EntryPointAccess::Public,
