@@ -173,7 +173,7 @@ mod tests {
         let updated_value = (
             PublicKey::ed25519_from_bytes([3u8; 32]).unwrap(),
             Some(String::from("Updated")),
-            U512::from(300)
+            U512::from(300),
         );
         kv_storage.call_store_tuple(name, original_value);
         kv_storage.call_store_tuple(name, updated_value);
