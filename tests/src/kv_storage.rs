@@ -1,10 +1,9 @@
 use casper_engine_test_support::{Code, Hash, SessionBuilder, TestContext, TestContextBuilder};
 use casper_types::{
     account::AccountHash,
-    bytesrepr::{Bytes, FromBytes},
+    bytesrepr::{FromBytes, ToBytes},
     runtime_args, AsymmetricType, CLTyped, PublicKey, RuntimeArgs, U512,
 };
-use std::collections::BTreeMap;
 
 pub const KV_STORAGE: &str = "kvstorage_contract";
 pub const KV_STORAGE_HASH: &str = "kvstorage_contract_hash";
@@ -40,111 +39,16 @@ impl KVstorageContract {
         }
     }
 
-    pub fn call_store_u64(&mut self, name: &str, value: u64) {
+    pub fn call_store_value<T: CLTyped + ToBytes>(
+        &mut self,
+        fn_name: &str,
+        key_name: &str,
+        value: T,
+    ) {
         self.call(
-            "store_u64",
+            fn_name,
             runtime_args! {
-                "name" => name,
-                "value" => value
-            },
-        );
-    }
-
-    pub fn call_store_string(&mut self, name: &str, value: String) {
-        self.call(
-            "store_string",
-            runtime_args! {
-                "name" => name,
-                "value" => value
-            },
-        );
-    }
-
-    pub fn call_store_u512(&mut self, name: &str, value: U512) {
-        self.call(
-            "store_u512",
-            runtime_args! {
-                "name" => name,
-                "value" => value
-            },
-        );
-    }
-
-    pub fn call_store_bytes(&mut self, name: &str, value: Bytes) {
-        self.call(
-            "store_bytes",
-            runtime_args! {
-                "name" => name,
-                "value" => value
-            },
-        );
-    }
-
-    pub fn call_store_account(&mut self, name: &str, value: AccountHash) {
-        self.call(
-            "store_account_hash",
-            runtime_args! {
-                "name" => name,
-                "value" => value
-            },
-        );
-    }
-
-    pub fn call_store_public_key(&mut self, name: &str, value: PublicKey) {
-        self.call(
-            "store_public_key",
-            runtime_args! {
-                "name" => name,
-                "value" => value
-            },
-        );
-    }
-
-    pub fn call_store_option(&mut self, name: &str, value: Option<String>) {
-        self.call(
-            "store_option",
-            runtime_args! {
-                "name" => name,
-                "value" => value
-            },
-        );
-    }
-
-    pub fn call_store_result(&mut self, name: &str, value: Result<String, String>) {
-        self.call(
-            "store_result",
-            runtime_args! {
-                "name" => name,
-                "value" => value
-            },
-        );
-    }
-
-    pub fn call_store_byte_array(&mut self, name: &str, value: [u8; 3]) {
-        self.call(
-            "store_byte_array",
-            runtime_args! {
-                "name" => name,
-                "value" => value
-            },
-        );
-    }
-
-    pub fn call_store_map(&mut self, name: &str, value: BTreeMap<String, Option<String>>) {
-        self.call(
-            "store_map",
-            runtime_args! {
-                "name" => name,
-                "value" => value
-            },
-        );
-    }
-
-    pub fn call_store_tuple(&mut self, name: &str, value: (PublicKey, Option<String>, U512)) {
-        self.call(
-            "store_tuple",
-            runtime_args! {
-                "name" => name,
+                "name" => key_name,
                 "value" => value
             },
         );

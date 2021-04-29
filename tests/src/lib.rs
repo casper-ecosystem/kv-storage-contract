@@ -4,185 +4,245 @@ mod kv_storage;
 #[cfg(test)]
 mod tests {
     use super::kv_storage;
-    use casper_types::{account::AccountHash, bytesrepr::Bytes, AsymmetricType, PublicKey, U512};
+    use casper_types::{
+        account::AccountHash,
+        bytesrepr::{Bytes, FromBytes, ToBytes},
+        AsymmetricType, CLTyped, Key, PublicKey, U128, U256, U512,
+    };
     use kv_storage::KVstorageContract;
     use std::collections::BTreeMap;
 
+    fn generic_test<T: CLTyped + FromBytes + ToBytes>(
+        fn_name: &str,
+        key_name: &str,
+        value1: T,
+        value2: T,
+    ) -> (T, T) {
+        let mut kv_storage = KVstorageContract::deploy();
+        kv_storage.call_store_value(fn_name, key_name, value1);
+        let check1: T = kv_storage.query_contract(key_name).unwrap();
+        kv_storage.call_store_value(fn_name, key_name, value2);
+        let check2: T = kv_storage.query_contract(key_name).unwrap();
+        (check1, check2)
+    }
+
+    #[test]
+    fn should_store_bool() {
+        let (value1, value2): (bool, bool) = (true, false);
+        let (ret1, ret2) = generic_test::<bool>("store_bool", "test_bool", value1, value2);
+        assert_eq!(value1, ret1);
+        assert_eq!(value2, ret2);
+    }
+
+    #[test]
+    fn should_store_i32() {
+        let (value1, value2): (i32, i32) = (7i32, 9i32);
+        let (ret1, ret2) = generic_test::<i32>("store_i32", "test_i32", value1, value2);
+        assert_eq!(value1, ret1);
+        assert_eq!(value2, ret2);
+    }
+
+    #[test]
+    fn should_store_i64() {
+        let (value1, value2): (i64, i64) = (3i64, 5i64);
+        let (ret1, ret2) = generic_test::<i64>("store_i64", "test_i64", value1, value2);
+        assert_eq!(value1, ret1);
+        assert_eq!(value2, ret2);
+    }
+
+    #[test]
+    fn should_store_u8() {
+        let (value1, value2): (u8, u8) = (1u8, 3u8);
+        let (ret1, ret2) = generic_test::<u8>("store_u8", "test_u8", value1, value2);
+        assert_eq!(value1, ret1);
+        assert_eq!(value2, ret2);
+    }
+
+    #[test]
+    fn should_store_u32() {
+        let (value1, value2): (u32, u32) = (1u32, 3u32);
+        let (ret1, ret2) = generic_test::<u32>("store_u32", "test_u32", value1, value2);
+        assert_eq!(value1, ret1);
+        assert_eq!(value2, ret2);
+    }
+
     #[test]
     fn should_store_u64() {
-        let mut kv_storage = KVstorageContract::deploy();
-        let (name, value) = ("test_u64", 1u64);
-        kv_storage.call_store_u64(name, value);
-        let check: u64 = kv_storage.query_contract(name).unwrap();
-        assert_eq!(value, check);
+        let (value1, value2): (u64, u64) = (1u64, 3u64);
+        let (ret1, ret2) = generic_test::<u64>("store_u64", "test_u64", value1, value2);
+        assert_eq!(value1, ret1);
+        assert_eq!(value2, ret2);
     }
 
     #[test]
-    fn should_store_string() {
-        let mut kv_storage = KVstorageContract::deploy();
-        let (name, value) = ("test_string", String::from("Hello World"));
-        kv_storage.call_store_string(name, value);
-        let check: String = kv_storage.query_contract(name).unwrap();
-        assert_eq!(String::from("Hello World"), check);
+    fn should_store_u128() {
+        let (value1, value2): (U128, U128) = (U128::from(1), U128::from(3));
+        let (ret1, ret2) = generic_test::<U128>("store_u128", "test_u128", value1, value2);
+        assert_eq!(value1, ret1);
+        assert_eq!(value2, ret2);
     }
 
     #[test]
-    fn should_store_bytes() {
-        let mut kv_storage = KVstorageContract::deploy();
-        let (name, value): (&str, Bytes) = ("test_string", vec![0x41u8, 0x41u8, 0x42u8].into());
-        kv_storage.call_store_bytes(name, value.clone());
-        let check: Bytes = kv_storage.query_contract(name).unwrap();
-        assert_eq!(value, check);
+    fn should_store_u256() {
+        let (value1, value2): (U256, U256) = (U256::from(10), U256::from(30));
+        let (ret1, ret2) = generic_test::<U256>("store_u256", "test_u256", value1, value2);
+        assert_eq!(value1, ret1);
+        assert_eq!(value2, ret2);
     }
 
     #[test]
     fn should_store_u512() {
-        let mut kv_storage = KVstorageContract::deploy();
-        let (name, value) = ("test_u512", U512::from(100));
-        kv_storage.call_store_u512(name, value);
-        let check: U512 = kv_storage.query_contract(name).unwrap();
-        assert_eq!(value, check);
+        let (value1, value2): (U512, U512) = (U512::from(100), U512::from(300));
+        let (ret1, ret2) = generic_test::<U512>("store_u512", "test_u512", value1, value2);
+        assert_eq!(value1, ret1);
+        assert_eq!(value2, ret2);
     }
 
     #[test]
-    fn should_store_account_hash() {
-        let mut kv_storage = KVstorageContract::deploy();
-        let (name, value) = ("test_account_hash", AccountHash::new([7u8; 32]));
-        kv_storage.call_store_account(name, value);
-        let check: AccountHash = kv_storage.query_contract(name).unwrap();
-        assert_eq!(value, check);
-    }
-
-    #[test]
-    fn should_update_u64() {
-        let mut kv_storage = KVstorageContract::deploy();
-        let name = "test_u64";
-        let original_value: u64 = 1;
-        let updated_value: u64 = 2;
-        kv_storage.call_store_u64(name, original_value);
-        kv_storage.call_store_u64(name, updated_value);
-        let value: u64 = kv_storage.query_contract(name).unwrap();
-        assert_eq!(value, 2);
-    }
-
-    #[test]
-    fn should_update_string() {
-        let mut kv_storage = KVstorageContract::deploy();
-        let name = "teststring";
-        let original_value: String = String::from("Hello");
-        let updated_value: String = String::from("World");
-        kv_storage.call_store_string(name, original_value);
-        kv_storage.call_store_string(name, updated_value);
-        let value: String = kv_storage.query_contract(name).unwrap();
-        assert_eq!(value, String::from("World"));
-    }
-
-    #[test]
-    fn should_update_u512() {
-        let mut kv_storage = KVstorageContract::deploy();
-        let name = "test_u512";
-        let original_value: U512 = U512::from(100);
-        let updated_value: U512 = U512::from(200);
-        kv_storage.call_store_u512(name, original_value);
-        kv_storage.call_store_u512(name, updated_value);
-        let value: U512 = kv_storage.query_contract(name).unwrap();
-        assert_eq!(value, U512::from(200));
-    }
-    #[test]
-    fn should_update_account_hash() {
-        let mut kv_storage = KVstorageContract::deploy();
-        let name = "test_AccountHash";
-        let original_value: AccountHash = AccountHash::new([7u8; 32]);
-        let updated_value: AccountHash = AccountHash::new([3u8; 32]);
-        kv_storage.call_store_account(name, original_value);
-        kv_storage.call_store_account(name, updated_value);
-        let value: AccountHash = kv_storage.query_contract(name).unwrap();
-        assert_eq!(value, updated_value);
-    }
-    #[test]
-    fn should_update_public_key() {
-        let mut kv_storage = KVstorageContract::deploy();
-        let name = "test_PublicKey";
-        let original_value = PublicKey::ed25519_from_bytes([1u8; 32]).unwrap();
-        let updated_value = PublicKey::ed25519_from_bytes([3u8; 32]).unwrap();
-        kv_storage.call_store_public_key(name, original_value);
-        kv_storage.call_store_public_key(name, updated_value);
-        let value: PublicKey = kv_storage.query_contract(name).unwrap();
-        assert_eq!(value, updated_value);
-    }
-    #[test]
-    fn should_update_option() {
-        let mut kv_storage = KVstorageContract::deploy();
-        let name = "test_Option";
-        let original_value = Some(String::from("Hello"));
-        let updated_value = Some(String::from("World"));
-        kv_storage.call_store_option(name, original_value);
-        kv_storage.call_store_option(name, updated_value);
-        let value: Option<String> = kv_storage.query_contract(name).unwrap();
-        assert_eq!(value.unwrap(), String::from("World"));
-    }
-    #[test]
-    fn should_update_result() {
-        let mut kv_storage = KVstorageContract::deploy();
-        let name = "test_Result";
-        let original_value = Ok(String::from("Success"));
-        let updated_value = Err(String::from("Fail"));
-        kv_storage.call_store_result(name, original_value);
-        kv_storage.call_store_result(name, updated_value);
-        let value: Result<String, String> = kv_storage.query_contract(name).unwrap();
-        assert_eq!(value.is_err(), true);
-    }
-    #[test]
-    fn should_update_byte_array() {
-        let mut kv_storage = KVstorageContract::deploy();
-        let name = "test_ByteArray";
-        let original_value: [u8; 3] = [1, 2, 3];
-        let updated_value: [u8; 3] = [2, 4, 6];
-        kv_storage.call_store_byte_array(name, original_value);
-        kv_storage.call_store_byte_array(name, updated_value);
-        let value: [u8; 3] = kv_storage.query_contract(name).unwrap();
-        assert_eq!(value, updated_value);
-    }
-    #[test]
-    fn should_update_map() {
-        let mut kv_storage = KVstorageContract::deploy();
-        let name = "test_Map";
-        let mut original_value = BTreeMap::new();
-        original_value.insert(String::from("alice"), Some(String::from("Purchased Milk")));
-        original_value.insert(String::from("bob"), Some(String::from("Purchased Egg")));
-        let mut updated_value = BTreeMap::new();
-        updated_value.insert(String::from("alice"), Some(String::from("Sold Milk")));
-        updated_value.insert(String::from("jane"), Some(String::from("Purchased Cake")));
-        kv_storage.call_store_map(name, original_value);
-        kv_storage.call_store_map(name, updated_value);
-        let res: BTreeMap<String, Option<String>> = kv_storage.query_contract(name).unwrap();
-        let keys: Vec<String> = res.keys().cloned().collect();
-        let values: Vec<Option<String>> = res.values().cloned().collect();
-        assert_eq!(keys, [String::from("alice"), String::from("jane")]);
-        assert_eq!(
-            values.get(1).unwrap(),
-            &Some(String::from("Purchased Cake"))
+    fn should_store_string() {
+        let (value1, value2) = (String::from("hello"), String::from("world"));
+        let (ret1, ret2) = generic_test::<String>(
+            "store_string",
+            "test_string",
+            value1.clone(),
+            value2.clone(),
         );
+        assert_eq!(value1, ret1);
+        assert_eq!(value2, ret2);
     }
+
     #[test]
-    fn should_update_tuple() {
-        let mut kv_storage = KVstorageContract::deploy();
-        let name = "test_Tuple";
-        let original_value = (
+    fn should_store_key() {
+        let (value1, value2): (Key, Key) = (
+            Key::Account(AccountHash::new([7u8; 32])),
+            Key::Account(AccountHash::new([9u8; 32])),
+        );
+        let (ret1, ret2) =
+            generic_test::<Key>("store_key", "test_key", value1.clone(), value2.clone());
+        assert_eq!(value1, ret1);
+        assert_eq!(value2, ret2);
+    }
+
+    #[test]
+    fn should_store_public_key() {
+        let (value1, value2): (PublicKey, PublicKey) = (
+            PublicKey::ed25519_from_bytes([1u8; 32]).unwrap(),
+            PublicKey::ed25519_from_bytes([3u8; 32]).unwrap(),
+        );
+        let (ret1, ret2) = generic_test::<PublicKey>(
+            "store_public_key",
+            "test_PublicKey",
+            value1.clone(),
+            value2.clone(),
+        );
+        assert_eq!(value1, ret1);
+        assert_eq!(value2, ret2);
+    }
+
+    #[test]
+    fn should_store_option() {
+        let (value1, value2): (Option<String>, Option<String>) =
+            (Some(String::from("Hello")), None);
+        let (ret1, ret2) = generic_test::<Option<String>>(
+            "store_option",
+            "test_Option",
+            value1.clone(),
+            value2.clone(),
+        );
+        assert_eq!(value1.unwrap(), ret1.unwrap());
+        assert_eq!(ret2.is_none(), true);
+    }
+
+    #[test]
+    fn should_store_list_of_bytes() {
+        let (value1, value2): (Bytes, Bytes) = (
+            vec![0x41u8, 0x41u8, 0x42u8].into(),
+            vec![0x59u8, 0x59u8, 0x59u8].into(),
+        );
+        let (ret1, ret2) = generic_test::<Bytes>(
+            "store_list_of_bytes",
+            "test_list_of_bytes",
+            value1.clone(),
+            value2.clone(),
+        );
+        assert_eq!(value1, ret1);
+        assert_eq!(value2, ret2);
+    }
+
+    #[test]
+    fn should_store_byte_array() {
+        let (value1, value2): ([u8; 3], [u8; 3]) = ([1, 2, 3], [2, 4, 6]);
+        let (ret1, ret2) =
+            generic_test::<[u8; 3]>("store_byte_array", "test_ByteArray", value1, value2);
+        assert_eq!(value1, ret1);
+        assert_eq!(value2, ret2);
+    }
+
+    #[test]
+    fn should_store_result() {
+        let (value1, value2): (Result<String, String>, Result<String, String>) =
+            (Ok(String::from("Success")), Err(String::from("Fail")));
+        let (ret1, ret2) = generic_test::<Result<String, String>>(
+            "store_result",
+            "test_Result",
+            value1.clone(),
+            value2.clone(),
+        );
+        assert_eq!(value1, ret1);
+        assert_eq!(ret2.is_err(), true);
+    }
+
+    #[test]
+    fn should_store_map() {
+        let mut value1: BTreeMap<String, Option<String>> = BTreeMap::new();
+        value1.insert(String::from("alice"), Some(String::from("Purchased Milk")));
+        value1.insert(String::from("bob"), Some(String::from("Purchased Egg")));
+        let mut value2: BTreeMap<String, Option<String>> = BTreeMap::new();
+        value2.insert(String::from("alice"), Some(String::from("Sold Milk")));
+        value2.insert(String::from("jane"), Some(String::from("Purchased Cake")));
+        let (ret1, ret2) = generic_test::<BTreeMap<String, Option<String>>>(
+            "store_map",
+            "test_Map",
+            value1.clone(),
+            value2.clone(),
+        );
+        assert_eq!(value1, ret1);
+        assert_eq!(value2, ret2);
+    }
+
+    #[test]
+    fn should_store_tuple3() {
+        let value1: (PublicKey, Option<String>, U512) = (
             PublicKey::ed25519_from_bytes([1u8; 32]).unwrap(),
             Some(String::from("Original")),
             U512::from(100),
         );
-        let updated_value = (
+        let value2: (PublicKey, Option<String>, U512) = (
             PublicKey::ed25519_from_bytes([3u8; 32]).unwrap(),
             Some(String::from("Updated")),
             U512::from(300),
         );
-        kv_storage.call_store_tuple(name, original_value);
-        kv_storage.call_store_tuple(name, updated_value);
-        let res: (PublicKey, Option<String>, U512) = kv_storage.query_contract(name).unwrap();
-        assert_eq!(res.0, PublicKey::ed25519_from_bytes([3u8; 32]).unwrap());
-        assert_eq!(res.1.unwrap(), String::from("Updated"));
-        assert_eq!(res.2, U512::from(300));
+        let (ret1, ret2) = generic_test::<(PublicKey, Option<String>, U512)>(
+            "store_tuple3",
+            "test_Tuple3",
+            value1.clone(),
+            value2.clone(),
+        );
+        assert_eq!(value1, ret1);
+        assert_eq!(value2, ret2);
+    }
+
+    #[test]
+    fn should_store_tuple2() {
+        let value1: (String, U512) = (String::from("Original"), U512::from(100));
+        let value2: (String, U512) = (String::from("Updated"), U512::from(300));
+        let (ret1, ret2) = generic_test::<(String, U512)>(
+            "store_tuple2",
+            "test_Tuple2",
+            value1.clone(),
+            value2.clone(),
+        );
+        assert_eq!(value1, ret1);
+        assert_eq!(value2, ret2);
     }
 }
