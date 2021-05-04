@@ -117,8 +117,7 @@ mod tests {
             Key::Account(AccountHash::new([7u8; 32])),
             Key::Account(AccountHash::new([9u8; 32])),
         );
-        let (ret1, ret2) =
-            generic_test::<Key>("store_key", "test_key", value1.clone(), value2.clone());
+        let (ret1, ret2) = generic_test::<Key>("store_key", "test_key", value1, value2);
         assert_eq!(value1, ret1);
         assert_eq!(value2, ret2);
     }
@@ -129,12 +128,8 @@ mod tests {
             PublicKey::ed25519_from_bytes([1u8; 32]).unwrap(),
             PublicKey::ed25519_from_bytes([3u8; 32]).unwrap(),
         );
-        let (ret1, ret2) = generic_test::<PublicKey>(
-            "store_public_key",
-            "test_PublicKey",
-            value1.clone(),
-            value2.clone(),
-        );
+        let (ret1, ret2) =
+            generic_test::<PublicKey>("store_public_key", "test_PublicKey", value1, value2);
         assert_eq!(value1, ret1);
         assert_eq!(value2, ret2);
     }
@@ -143,12 +138,8 @@ mod tests {
     fn should_store_option() {
         let (value1, value2): (Option<String>, Option<String>) =
             (Some(String::from("Hello")), None);
-        let (ret1, ret2) = generic_test::<Option<String>>(
-            "store_option",
-            "test_Option",
-            value1.clone(),
-            value2.clone(),
-        );
+        let (ret1, ret2) =
+            generic_test::<Option<String>>("store_option", "test_Option", value1.clone(), value2);
         assert_eq!(value1.unwrap(), ret1.unwrap());
         assert_eq!(ret2.is_none(), true);
     }
