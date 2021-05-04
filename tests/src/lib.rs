@@ -186,7 +186,7 @@ mod tests {
             "store_result",
             "test_Result",
             value1.clone(),
-            value2.clone(),
+            value2,
         );
         assert_eq!(value1, ret1);
         assert_eq!(ret2.is_err(), true);
