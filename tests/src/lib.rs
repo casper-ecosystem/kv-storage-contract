@@ -128,8 +128,12 @@ mod tests {
             PublicKey::ed25519_from_bytes([1u8; 32]).unwrap(),
             PublicKey::ed25519_from_bytes([3u8; 32]).unwrap(),
         );
-        let (ret1, ret2) =
-            generic_test::<PublicKey>("store_public_key", "test_PublicKey", value1, value2);
+        let (ret1, ret2) = generic_test::<PublicKey>(
+            "store_public_key",
+            "test_PublicKey",
+            value1.clone(),
+            value2.clone(),
+        );
         assert_eq!(value1, ret1);
         assert_eq!(value2, ret2);
     }
@@ -141,7 +145,7 @@ mod tests {
         let (ret1, ret2) =
             generic_test::<Option<String>>("store_option", "test_Option", value1.clone(), value2);
         assert_eq!(value1.unwrap(), ret1.unwrap());
-        assert_eq!(ret2.is_none(), true);
+        assert!(ret2.is_some());
     }
 
     #[test]
@@ -180,7 +184,7 @@ mod tests {
             value2,
         );
         assert_eq!(value1, ret1);
-        assert_eq!(ret2.is_err(), true);
+        assert!(ret2.is_ok());
     }
 
     #[test]
