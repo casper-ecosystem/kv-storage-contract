@@ -145,7 +145,7 @@ mod tests {
         let (ret1, ret2) =
             generic_test::<Option<String>>("store_option", "test_Option", value1.clone(), value2);
         assert_eq!(value1.unwrap(), ret1.unwrap());
-        assert!(ret2.is_some());
+        assert!(ret2.is_none());
     }
 
     #[test]
@@ -184,7 +184,7 @@ mod tests {
             value2,
         );
         assert_eq!(value1, ret1);
-        assert!(ret2.is_ok());
+        assert!(ret2.is_err());
     }
 
     #[test]
