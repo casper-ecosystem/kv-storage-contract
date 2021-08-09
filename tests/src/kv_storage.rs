@@ -17,17 +17,18 @@ pub struct KVstorageContract {
 impl KVstorageContract {
     pub fn deploy() -> Self {
         let account = PublicKey::ed25519_from_bytes([3u8; 32]).unwrap();
+        let account_hash = account.to_account_hash();
         let mut context = TestContextBuilder::new()
             .with_public_key(account, U512::from(500_000_000_000_000_000u64))
             .build();
         let session_code = Code::from("contract.wasm");
         let session = SessionBuilder::new(session_code, runtime_args! {})
-            .with_address(account.to_account_hash())
-            .with_authorization_keys(&[account.to_account_hash()])
+            .with_address(account_hash)
+            .with_authorization_keys(&[account_hash])
             .build();
         context.run(session);
         let kvstorage_hash = context
-            .query(account.to_account_hash(), &[KV_STORAGE_HASH.to_string()])
+            .query(account_hash, &[KV_STORAGE_HASH.to_string()])
             .unwrap()
             .into_t()
             .unwrap();
@@ -35,7 +36,7 @@ impl KVstorageContract {
         Self {
             context,
             kvstorage_hash,
-            account: account.to_account_hash(),
+            account: account_hash,
         }
     }
 
