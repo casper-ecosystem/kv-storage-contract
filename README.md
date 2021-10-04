@@ -1,5 +1,5 @@
 ## How to understand the contract
-Refer to this [guide](https://docs.casperlabs.io/en/latest/dapp-dev-guide/kv-storage-tutorial.html) to understand how the Key-Value contract works, in addition to some detail on how the Casperlabs Contract DSL works. 
+Refer to this [guide](https://docs.casperlabs.io/en/latest/dapp-dev-guide/tutorials/kv-storage-tutorial.html) to understand how the Key-Value contract works, in addition to some detail on how the Casperlabs Contract DSL works. 
 
 ## Online IDE
 Follow this link to execute this contract in an online IDE.
