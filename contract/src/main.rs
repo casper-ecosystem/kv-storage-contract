@@ -121,7 +121,7 @@ fn create_key(name: &str, dict_name: &str, dict_value: String) {
             runtime::put_key(name, uref.into());
         }
         Some(_) => {
-            runtime::revert(ApiError::None);
+            runtime::revert(ApiError::User(1));
         }
     }
 }
@@ -133,10 +133,10 @@ fn read_key(name: &str, dict_name: &str) -> String {
                 let result = storage::dictionary_get::<String>(uref, dict_name).unwrap_or_revert();
                 result.unwrap()
             }
-            _ => runtime::revert(ApiError::None),
+            _ => runtime::revert(ApiError::User(1)),
         },
         None => {
-            runtime::revert(ApiError::None);
+            runtime::revert(ApiError::User(1));
         }
     }
 }
@@ -149,7 +149,7 @@ fn update_key(name: &str, dict_name: &str, dict_value: String) {
             runtime::put_key(name, uref.into());
         }
         None => {
-            runtime::revert(ApiError::None);
+            runtime::revert(ApiError::User(1));
         }
     }
 }
@@ -162,7 +162,7 @@ fn delete_key(name: &str, dict_name: &str) {
             runtime::put_key(name, uref.into());
         }
         None => {
-            runtime::revert(ApiError::None);
+            runtime::revert(ApiError::User(1));
         }
     }
 }
