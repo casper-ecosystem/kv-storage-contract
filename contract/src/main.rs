@@ -28,7 +28,7 @@ use types::{
 fn create() {
     let name: String = runtime::get_named_arg("uref");
     let key: String = runtime::get_named_arg("dict_key");
-    let value: Option<String> = runtime::get_named_arg("dict_value");
+    let value: String = runtime::get_named_arg("dict_value");
     create_key(name.as_str(), key.as_str(), value);
 }
 
@@ -37,9 +37,7 @@ fn create() {
 fn read() {
     let name: String = runtime::get_named_arg("uref");
     let key: String = runtime::get_named_arg("dict_key");
-    runtime::ret(
-        CLValue::from_t(read_key::<Option<String>>(name.as_str(), key.as_str())).unwrap_or_revert(),
-    );
+    runtime::ret(CLValue::from_t(read_key(name.as_str(), key.as_str())).unwrap_or_revert());
 }
 
 // Update a value stored under dict_key in the dictionary accessed by uref with new value
@@ -47,7 +45,7 @@ fn read() {
 fn update() {
     let name: String = runtime::get_named_arg("uref");
     let key: String = runtime::get_named_arg("dict_key");
-    let value: Option<String> = runtime::get_named_arg("dict_value");
+    let value: String = runtime::get_named_arg("dict_value");
     update_key(name.as_str(), key.as_str(), value);
 }
 
@@ -56,7 +54,7 @@ fn update() {
 fn delete() {
     let name: String = runtime::get_named_arg("uref");
     let key: String = runtime::get_named_arg("dict_key");
-    update_key::<Option<String>>(name.as_str(), key.as_str(), None);
+    delete_key(name.as_str(), key.as_str());
 }
 
 #[no_mangle]
@@ -109,7 +107,7 @@ pub extern "C" fn call() {
     runtime::put_key("kvstorage_contract_hash_wrapped", contract_hash_pack.into())
 }
 
-fn create_key<T: ToBytes + CLTyped>(name: &str, dict_name: &str, dict_value: T) {
+fn create_key(name: &str, dict_name: &str, dict_value: String) {
     match runtime::get_key(name) {
         None => {
             // storage::new_dictionary function creates new URef that represents a seed for a dictionary partition
@@ -128,11 +126,11 @@ fn create_key<T: ToBytes + CLTyped>(name: &str, dict_name: &str, dict_value: T) 
     }
 }
 
-fn read_key<T: FromBytes + CLTyped>(name: &str, dict_name: &str) -> T {
+fn read_key(name: &str, dict_name: &str) -> String {
     match runtime::get_key(name) {
         Some(key) => match key {
             Key::URef(uref) => {
-                let result = storage::dictionary_get::<T>(uref, dict_name).unwrap_or_revert();
+                let result = storage::dictionary_get::<String>(uref, dict_name).unwrap_or_revert();
                 result.unwrap()
             }
             _ => runtime::revert(ApiError::None),
@@ -143,11 +141,24 @@ fn read_key<T: FromBytes + CLTyped>(name: &str, dict_name: &str) -> T {
     }
 }
 
-fn update_key<T: ToBytes + CLTyped>(name: &str, dict_name: &str, dict_value: T) {
+fn update_key(name: &str, dict_name: &str, dict_value: String) {
     match runtime::get_key(name) {
         Some(key) => {
             let uref = key.try_into().unwrap_or_revert();
             storage::dictionary_put(uref, dict_name, dict_value);
+            runtime::put_key(name, uref.into());
+        }
+        None => {
+            runtime::revert(ApiError::None);
+        }
+    }
+}
+
+fn delete_key(name: &str, dict_name: &str) {
+    match runtime::get_key(name) {
+        Some(key) => {
+            let uref = key.try_into().unwrap_or_revert();
+            storage::dictionary_put(uref, dict_name, "");
             runtime::put_key(name, uref.into());
         }
         None => {

@@ -16,13 +16,7 @@ impl KVStorage {
         ))
     }
 
-    pub fn create(
-        &self,
-        sender: AccountHash,
-        uref_name: &str,
-        dict_key: &str,
-        dict_value: Option<String>,
-    ) {
+    pub fn create(&self, sender: AccountHash, uref_name: &str, dict_key: &str, dict_value: String) {
         self.0.call_contract(
             sender,
             "create",
@@ -34,13 +28,7 @@ impl KVStorage {
         )
     }
 
-    pub fn update(
-        &self,
-        sender: AccountHash,
-        uref_name: &str,
-        dict_key: &str,
-        dict_value: Option<String>,
-    ) {
+    pub fn update(&self, sender: AccountHash, uref_name: &str, dict_key: &str, dict_value: String) {
         self.0.call_contract(
             sender,
             "update",
@@ -63,7 +51,9 @@ impl KVStorage {
         )
     }
 
-    pub fn read(&self, uref_name: &str, dict_key: &str) -> Option<String> {
-        self.0.query_dictionary(uref_name, dict_key.to_string())
+    pub fn read(&self, uref_name: &str, dict_key: &str) -> String {
+        self.0
+            .query_dictionary(uref_name, dict_key.to_string())
+            .unwrap()
     }
 }

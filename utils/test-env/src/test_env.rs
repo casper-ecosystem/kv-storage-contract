@@ -139,12 +139,14 @@ impl TestEnvState {
             Some(dict_name),
             dictionary_item_key,
         ) {
-            Ok(value) => value
-                .as_cl_value()
-                .expect("should be cl value.")
-                .clone()
-                .into_t()
-                .expect("Wrong type in query result."),
+            Ok(value) => Some(
+                value
+                    .as_cl_value()
+                    .expect("should be cl value.")
+                    .clone()
+                    .into_t()
+                    .expect("Wrong type in query result."),
+            ),
             Err(e) => {
                 println!("{}", e);
                 None

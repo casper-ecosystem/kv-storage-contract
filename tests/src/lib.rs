@@ -20,36 +20,32 @@ mod tests {
     fn should_create_string() {
         let (env, kv_storage, _) = deploy();
         let user = env.next_user();
-        kv_storage.create(user, "Test", "string", Some(String::from("hello")));
+        kv_storage.create(user, "Test", "string", String::from("hello"));
         let result = kv_storage.read("Test", "string");
-        assert!(result.is_some());
-        assert_eq!(result.unwrap(), String::from("hello"));
+        assert_eq!(result, String::from("hello"));
     }
 
     #[test]
     fn should_update_string() {
         let (env, kv_storage, _) = deploy();
         let user = env.next_user();
-        kv_storage.create(user, "Test", "string", Some(String::from("hello")));
+        kv_storage.create(user, "Test", "string", String::from("hello"));
         let result1 = kv_storage.read("Test", "string");
-        assert!(result1.is_some());
-        assert_eq!(result1.unwrap(), String::from("hello"));
-        kv_storage.update(user, "Test", "string", Some(String::from("world")));
+        assert_eq!(result1, String::from("hello"));
+        kv_storage.update(user, "Test", "string", String::from("world"));
         let result2 = kv_storage.read("Test", "string");
-        assert!(result2.is_some());
-        assert_eq!(result2.unwrap(), String::from("world"));
+        assert_eq!(result2, String::from("world"));
     }
 
     #[test]
     fn should_delete_string() {
         let (env, kv_storage, _) = deploy();
         let user = env.next_user();
-        kv_storage.create(user, "Test", "string", Some(String::from("hello")));
+        kv_storage.create(user, "Test", "string", String::from("hello"));
         let result1 = kv_storage.read("Test", "string");
-        assert!(result1.is_some());
-        assert_eq!(result1.unwrap(), String::from("hello"));
+        assert_eq!(result1, String::from("hello"));
         kv_storage.delete(user, "Test", "string");
         let result2 = kv_storage.read("Test", "string");
-        assert!(result2.is_none());
+        assert_eq!(result2, String::from(""));
     }
 }
