@@ -7,6 +7,8 @@ edition = "2018"
 [dependencies]
 contract = { package = "casper-contract", version="3.0" }
 types = { package = "casper-types", version="3.0" }
+rand = "0.8.5"
+getrandom = { version = "0.2", features = ["js"] }
 
 [[bin]]
 name = "contract"
@@ -16,4 +18,6 @@ doctest = false
 test = false
 
 [features]
-default = ["contract/std", "types/std"]
+std = ["contract/std"]
+
+#default = ["contract/std", "types/std"]
