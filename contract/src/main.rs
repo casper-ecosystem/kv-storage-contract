@@ -1,11 +1,12 @@
+#![no_std]
 #![no_main]
 #![allow(unused_imports)]
 #![allow(unused_parens)]
 #![allow(non_snake_case)]
 
 extern crate alloc;
-use alloc::{collections::BTreeSet, string::String};
-use std::{collections::BTreeMap, convert::TryInto};
+use alloc::{collections::{BTreeSet, BTreeMap}, string::String, boxed::Box, vec, vec::Vec};
+use core::convert::TryInto;
 
 use contract::{
     contract_api::{runtime, storage},
@@ -170,9 +171,9 @@ pub extern "C" fn call() {
 
     let (contract_hash, _) =
         storage::add_contract_version(contract_package_hash, entry_points, Default::default());
-    runtime::put_key("kvstorage_contract", contract_hash.into());
+    runtime::put_key("kvstorage_contract_hash", contract_hash.into());
     let contract_hash_pack = storage::new_uref(contract_hash);
-    runtime::put_key("kvstorage_contract_hash", contract_hash_pack.into())
+    runtime::put_key("kvstorage_contract_package_hash", contract_hash_pack.into())
 }
 
 fn read_and_store<T: CLTyped + FromBytes + ToBytes>() {
