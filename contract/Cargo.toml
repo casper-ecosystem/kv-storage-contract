@@ -5,8 +5,11 @@ authors = ["karandh <karan@casperlabs.io>", "Maciej Zieliński <maciej@casperlab
 edition = "2018"
 
 [dependencies]
-contract = { package = "casper-contract", version="1.3.2" }
-types = { package = "casper-types", version="1.3.2" }
+contract = { package = "casper-contract", version="3.0.0", default-features = false, features = [
+  "test-support",
+  "no-std-helpers"
+]}
+types = { package = "casper-types", version="3.0.0", default-features = false}
 
 [[bin]]
 name = "contract"
@@ -14,6 +17,3 @@ path = "src/main.rs"
 bench = false
 doctest = false
 test = false
-
-[features]
-default = ["contract/std", "types/std"]
